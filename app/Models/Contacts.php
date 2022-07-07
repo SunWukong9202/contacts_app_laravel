@@ -9,11 +9,11 @@ class Contacts extends Model
 {
     use HasFactory;
 
-    public $timestamps = false;
-
     protected $fillable = [
         "name",
-        "phone_number"
+        "phone_number",
+        "age",
+        "email"
     ];
 
     public function user() {

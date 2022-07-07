@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Contacts;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ContactsController extends Controller
 {
@@ -12,9 +14,16 @@ class ContactsController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $req)
     {
-        //
+        $email_user = $req->user()->email ?? null;
+        if($email_user) {
+            $contacts = User::where('email', $email_user)->first()->contacts;
+        } else {
+            return redirect(route('login'));
+        }
+        
+        return view('contacts', ['contacts' => $contacts]);
     }
 
     /**
@@ -35,8 +44,24 @@ class ContactsController extends Controller
      */
     public function store(Request $request)
     {
-        Contacts::create($request->all());
-        return response('Contact created');
+        $request->validate([
+            'name' => 'required',
+            'email' => 'required|email',
+            'age' => 'required|numeric|min:0|max:255',
+            'phone_number' => 'required|digits:9'
+        ]);
+        if(is_null($request->name)) {
+            return back()->withErrors(['name' => 'This field is required']);
+        }
+        $contact = new Contacts;
+        $contact->name = $request->name;
+        $contact->age = $request->age;
+        $contact->email = $request->email;
+        $contact->phone_number = $request->phone_number;
+        $contact->user_id = $request->user()->id;
+        $contact->save();
+
+        return redirect(route('contacts.index'));
     }
 
     /**

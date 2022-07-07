@@ -9,7 +9,4 @@ class Users extends Model
 {
     use HasFactory;
 
-    public function contacts() {
-        return $this->hasMany(Contacts::class);
-    }
 }

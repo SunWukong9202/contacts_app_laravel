@@ -16,7 +16,48 @@
 
                 <div class="col-md-6">
                   <input id="name" type="text" name="name"
-                    class="form-control" required autocomplete="name" autofocus>
+                    class="form-control @error('name') is-invalid @enderror" 
+                    autocomplete="name" autofocus value="{{ old('name') }}">
+
+                  @error('name')
+                    <span class="invalid-feedback" role="alert">
+                        <strong>{{ $message }}</strong>
+                    </span>
+                  @enderror
+                </div>
+              </div>
+
+              <div class="row mb-3">
+                <label for="age"
+                  class="col-md-4 col-form-label text-md-end">{{ __('Age') }}</label>
+
+                <div class="col-md-6">
+                  <input id="age" type="number" 
+                    class="form-control @error('age') is-invalid @enderror"
+                    name="age"  autocomplete="age" value="{{ old('age') }}"v>
+
+                    @error('age')
+                      <span class="invalid-feedback" role="alert">
+                          <strong>{{ $message }}</strong>
+                      </span>
+                    @enderror
+                </div>
+              </div>
+
+              <div class="row mb-3">
+                <label for="email"
+                  class="col-md-4 col-form-label text-md-end">{{ __('email') }}</label>
+
+                <div class="col-md-6">
+                  <input id="email" type="text" 
+                    class="form-control @error('email') is-invalid @enderror"
+                    name="email"  autocomplete="email" value="{{ old('email') }}">
+
+                    @error('email')
+                      <span class="invalid-feedback" role="alert">
+                          <strong>{{ $message }}</strong>
+                      </span>
+                    @enderror
                 </div>
               </div>
 
@@ -25,10 +66,19 @@
                   class="col-md-4 col-form-label text-md-end">{{ __('Phone Number') }}</label>
 
                 <div class="col-md-6">
-                  <input id="phone_number" type="tel" class="form-control"
-                    name="phone_number" required autocomplete="phone_number">
+                  <input id="phone_number" type="tel" 
+                    class="form-control @error('phone_number') is-invalid @enderror"
+                    name="phone_number"  autocomplete="phone_number" value="{{ old('phone_number') }}">
+                  
+                  @error('phone_number')
+                    <span class="invalid-feedback" role="alert">
+                        <strong>{{ $message }}</strong>
+                    </span>
+                  @enderror
                 </div>
               </div>
+
+              
 
               <div class="row mb-0">
                 <div class="col-md-6 offset-md-4">

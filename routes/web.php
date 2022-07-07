@@ -24,13 +24,12 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Auth::routes();
+
+Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+
+Route::get('/contacts', [ContactsController::class, 'index'])->name('contacts.index');
 
 Route::get('/contacts/create', [ContactsController::class, 'create'])->name('contacts.create');
 
 Route::post('/contacts', [ContactsController::class, 'store'])->name('contacts.store');
-
-
-
-Auth::routes();
-
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
