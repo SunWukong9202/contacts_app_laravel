@@ -23,7 +23,7 @@ class ContactsController extends Controller
             return redirect(route('login'));
         }
         
-        return view('contacts', ['contacts' => $contacts]);
+        return view('contacts.index', ['contacts' => $contacts]);
     }
 
     /**
@@ -33,7 +33,7 @@ class ContactsController extends Controller
      */
     public function create()
     {
-        return view('contact');
+        return view('contacts.create');
     }
 
     /**
@@ -50,9 +50,7 @@ class ContactsController extends Controller
             'age' => 'required|numeric|min:0|max:255',
             'phone_number' => 'required|digits:9'
         ]);
-        if(is_null($request->name)) {
-            return back()->withErrors(['name' => 'This field is required']);
-        }
+
         $contact = new Contacts;
         $contact->name = $request->name;
         $contact->age = $request->age;
@@ -81,9 +79,9 @@ class ContactsController extends Controller
      * @param  \App\Models\Contacts  $contacts
      * @return \Illuminate\Http\Response
      */
-    public function edit(Contacts $contacts)
+    public function edit(Contacts $contact)
     {
-        //
+        return view('contacts.edit', compact('contact'));
     }
 
     /**
@@ -93,9 +91,16 @@ class ContactsController extends Controller
      * @param  \App\Models\Contacts  $contacts
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Contacts $contacts)
+    public function update(Request $request, Contacts $contact)
     {
-        //
+        $data = $request->validate([
+            'name' => 'required',
+            'email' => 'required|email',
+            'age' => 'required|numeric|min:0|max:255',
+            'phone_number' => 'required|digits:9'
+        ]);
+        $contact->update($data);
+        return redirect()->route('contacts.index');
     }
 
     /**
