@@ -24,7 +24,13 @@ class HomeController extends Controller
      */
     public function index(Request $request)
     {
-        // $request->session()->keep(['username', 'email']);
-        return view('home');
+        $user_id = auth()->id() ?? null;
+        if($user_id) {
+            $contacts = User::find($user_id)->contacts ?? null;
+        } else {
+            return redirect(route('login'));
+        }
+        //compact(...) equal to ['contacts' => $contacts]
+        return view('home', compact('contacts'));
     }
 }

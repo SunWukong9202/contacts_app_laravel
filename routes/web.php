@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ContactsController;
+use App\Http\Controllers\HomeController;
 use App\Models\Contacts;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -20,20 +21,24 @@ use Illuminate\Support\Facades\View;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', fn () => auth()->check() ? redirect('/home') : view('welcome') );
 
 Auth::routes();
 
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Route::get('/home', [HomeController::class, 'index'])->name('home');
 
-Route::get('/contacts', [ContactsController::class, 'index'])->name('contacts.index');
+Route::resource('contacts', ContactsController::class);
 
-Route::get('/contacts/create', [ContactsController::class, 'create'])->name('contacts.create');
+// Route::get('/contacts', [ContactsController::class, 'index'])->name('contacts.index');
 
-Route::get('/contacts/{contact}/edit', [ContactsController::class, 'edit'])->name('contacts.edit');
+// Route::get('/contacts/create', [ContactsController::class, 'create'])->name('contacts.create');
 
-Route::put('/contacts/{contact}', [ContactsController::class, 'update'])->name('contacts.update');
+// Route::get('/contacts/{contact}/edit', [ContactsController::class, 'edit'])->name('contacts.edit');
 
-Route::post('/contacts', [ContactsController::class, 'store'])->name('contacts.store');
+// Route::put('/contacts/{contact}', [ContactsController::class, 'update'])->name('contacts.update');
+
+// Route::get('/contacts/{contact}', [ContactsController::class, 'show'])->name('contacts.show');
+
+// Route::delete('/contacts/{contact}', [ContactsController::class, 'destroy'])->name('contacts.destroy');
+
+// Route::post('/contacts', [ContactsController::class, 'store'])->name('contacts.store');

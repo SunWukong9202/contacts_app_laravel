@@ -16,14 +16,14 @@ class ContactsController extends Controller
      */
     public function index(Request $req)
     {
-        $email_user = $req->user()->email ?? null;
-        if($email_user) {
-            $contacts = User::where('email', $email_user)->first()->contacts;
+        $user_id = auth()->id() ?? null;
+        if($user_id) {
+            $contacts = User::find($user_id)->contacts ?? null;
         } else {
             return redirect(route('login'));
         }
         
-        return view('contacts.index', ['contacts' => $contacts]);
+        return view('contacts.index', compact('contacts'));
     }
 
     /**
@@ -44,22 +44,18 @@ class ContactsController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
+        $contact = $request->validate([
             'name' => 'required',
             'email' => 'required|email',
             'age' => 'required|numeric|min:0|max:255',
             'phone_number' => 'required|digits:9'
         ]);
+        $contact['user_id'] = $request->user()->id;
 
-        $contact = new Contacts;
-        $contact->name = $request->name;
-        $contact->age = $request->age;
-        $contact->email = $request->email;
-        $contact->phone_number = $request->phone_number;
-        $contact->user_id = $request->user()->id;
-        $contact->save();
+        Contacts::create($contact);
+        // auth()->user()->contacts()->create($contact);
 
-        return redirect(route('contacts.index'));
+        return redirect()->route('home');
     }
 
     /**
@@ -68,9 +64,9 @@ class ContactsController extends Controller
      * @param  \App\Models\Contacts  $contacts
      * @return \Illuminate\Http\Response
      */
-    public function show(Contacts $contacts)
+    public function show(Contacts $contact)
     {
-        //
+        return view('contacts.show', compact('contact'));
     }
 
     /**
@@ -109,8 +105,9 @@ class ContactsController extends Controller
      * @param  \App\Models\Contacts  $contacts
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Contacts $contacts)
+    public function destroy(Contacts $contact)
     {
-        //
+        $contact->delete();
+        return redirect()->route('contacts.index');
     }
 }
