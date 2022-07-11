@@ -6,6 +6,7 @@ use App\Models\Contacts;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 
 class ContactsController extends Controller
 {
@@ -66,6 +67,7 @@ class ContactsController extends Controller
      */
     public function show(Contacts $contact)
     {
+        $this->authorize('view', $contact);
         return view('contacts.show', compact('contact'));
     }
 
@@ -77,6 +79,8 @@ class ContactsController extends Controller
      */
     public function edit(Contacts $contact)
     {
+        $this->authorize('update', $contact);
+
         return view('contacts.edit', compact('contact'));
     }
 
@@ -89,6 +93,8 @@ class ContactsController extends Controller
      */
     public function update(Request $request, Contacts $contact)
     {
+        $this->authorize('update', $contact);
+
         $data = $request->validate([
             'name' => 'required',
             'email' => 'required|email',
@@ -107,6 +113,8 @@ class ContactsController extends Controller
      */
     public function destroy(Contacts $contact)
     {
+        $this->authorize('delete', $contact);
+
         $contact->delete();
         return redirect()->route('contacts.index');
     }
