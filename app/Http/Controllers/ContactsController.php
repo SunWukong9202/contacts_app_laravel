@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreContactRequest;
 use App\Models\Contacts;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -19,7 +20,8 @@ class ContactsController extends Controller
     {
         $user_id = auth()->id() ?? null;
         if($user_id) {
-            $contacts = User::find($user_id)->contacts ?? null;
+            $contacts = User::find($user_id)->contacts()
+                ->orderBy('name', 'desc')->paginate(6) ?? null;
         } else {
             return redirect(route('login'));
         }
@@ -43,20 +45,22 @@ class ContactsController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(StoreContactRequest $request)
     {
-        $contact = $request->validate([
-            'name' => 'required',
-            'email' => 'required|email',
-            'age' => 'required|numeric|min:0|max:255',
-            'phone_number' => 'required|digits:9'
-        ]);
+        $contact = $request->validated();
+        if($request->hasFile('profile_picture')) {
+            $path = $request->file('profile_picture')->store('profiles', 'public');
+            $contact['profile_picture'] = $path;
+        }
         $contact['user_id'] = $request->user()->id;
 
         Contacts::create($contact);
         // auth()->user()->contacts()->create($contact);
 
-        return redirect()->route('home');
+        return redirect('home')->with('alert',[
+            'message' => "Contact {$contact['name']} Successfully saved.",
+            'type' => 'success'
+         ]);
     }
 
     /**
@@ -91,18 +95,22 @@ class ContactsController extends Controller
      * @param  \App\Models\Contacts  $contacts
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Contacts $contact)
+    public function update(StoreContactRequest $request, Contacts $contact)
     {
         $this->authorize('update', $contact);
 
-        $data = $request->validate([
-            'name' => 'required',
-            'email' => 'required|email',
-            'age' => 'required|numeric|min:0|max:255',
-            'phone_number' => 'required|digits:9'
-        ]);
+        $data = $request->validated();
+
+        if($request->hasFile('profile_picture')) {
+            $path = $request->file('profile_picture')->store('profiles', 'public');
+            $contact['profile_picture'] = $path;
+        }
+
         $contact->update($data);
-        return redirect()->route('contacts.index');
+        return redirect()->route('home')->with('alert',[
+            'message' => "Contact {$data['name']} Successfully updated.",
+            'type' => 'success'
+         ]);
     }
 
     /**
@@ -116,6 +124,9 @@ class ContactsController extends Controller
         $this->authorize('delete', $contact);
 
         $contact->delete();
-        return redirect()->route('contacts.index');
+        return back()->with('alert',[
+            'message' => "Contact $contact->name Successfully deleted.",
+            'type' => 'success'
+         ]);
     }
 }

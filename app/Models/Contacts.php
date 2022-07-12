@@ -14,7 +14,7 @@ class Contacts extends Model
         "phone_number",
         "age",
         "email",
-        "user_id"
+        "user_id",
     ];
 
     public function user() {

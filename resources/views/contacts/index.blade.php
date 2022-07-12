@@ -6,7 +6,7 @@
       <div class="d-flex justify-content-between bg-dark mb-3 rounded px-4 py-2">
         <div>
           <a href="{{ route('contacts.show', $contact->id) }}">
-            <img src="/img/logo.png" style="width: 20px;">
+            <img src="{{ Storage::url($contact->profile_picture) }}" class="profile-picture">
           </a>
         </div>
 
@@ -22,6 +22,18 @@
               {{ $contact->phone_number }}
             </a>
           </p>
+
+          <a class="btn btn-secondary mb-0 me-2" href="{{ route('contacts.edit', $contact->id) }}">
+            <x-icon icon="pencil"/>
+          </a>
+           <form action="{{ route('contacts.destroy', $contact->id) }}" method="POST">
+              @csrf
+              @method('DELETE') 
+              <button type="submit" class="btn btn-danger mb-0 p-1 px-2">
+                <x-icon icon="trash"/>
+              </button>
+          </form>
+
         </div>
       </div>
     @empty
@@ -32,5 +44,6 @@
         </div>
       </div>
     @endforelse
+    {{ $contacts->links() }}
   </div>
 @endsection

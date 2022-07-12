@@ -26,7 +26,8 @@ class HomeController extends Controller
     {
         $user_id = auth()->id() ?? null;
         if($user_id) {
-            $contacts = User::find($user_id)->contacts ?? null;
+            $contacts = User::find($user_id)->contacts()
+                ->latest()->take(9)->get() ?? null;
         } else {
             return redirect(route('login'));
         }

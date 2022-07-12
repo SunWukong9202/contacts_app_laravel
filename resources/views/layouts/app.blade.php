@@ -99,6 +99,10 @@
     </nav>
 
     <main class="py-4">
+
+      @if ($alert = session()->get('alert'))
+        <x-alert :type="$alert['type']" :message="$alert['message']"/>
+      @endif
       @yield('content')
     </main>
   </div>

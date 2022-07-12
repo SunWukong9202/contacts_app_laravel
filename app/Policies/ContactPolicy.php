@@ -41,7 +41,7 @@ class ContactPolicy
      */
     public function create(User $user)
     {
-        //
+        
     }
 
     /**

@@ -7,7 +7,10 @@
         <div class="card">
           <div class="card-header">{{ __('Contact Info') }}</div>
 
-          <div class="card-body">
+          <div class="card-body ">
+            <div class="d-flex justify-content-center">
+                <img src="{{ Storage::url($contact->profile_picture) }}" class="profile-picture">
+            </div>
             <p>Name: {{ $contact->name }}</p>
             <p>Age: {{ $contact->age }}</p>
             <p>Email: <a href="mailto:{{ $contact->email }}">
